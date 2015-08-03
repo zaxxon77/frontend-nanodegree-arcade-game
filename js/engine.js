@@ -80,7 +80,21 @@ var Engine = (function(global) {
      */
     function update(dt) {
         updateEntities(dt);
-        // checkCollisions();
+
+        // Check for collisions between player and enemies
+        checkCollisions();
+    }
+
+    // This function is called by update() to see if the player has collided
+    // with any enemies.
+    // Note: player size may be variable, find an appropriate collision area
+    function checkCollisions() {
+        allEnemies.forEach(function(enemy) {
+            if (enemy.y === player.y-7 
+                && (enemy.x >= player.x-70 && enemy.x <= player.x+70)) {
+                reset();
+            };
+        });
     }
 
     /* This is called by the update function  and loops through all of the
@@ -155,12 +169,20 @@ var Engine = (function(global) {
         player.render();
     }
 
+    // This function creates more enemies as they fall off the board
+    //function getMoreEnemies() {}
+
     /* This function does nothing but it could have been a good place to
      * handle game reset states - maybe a new game menu or a game over screen
      * those sorts of things. It's only called once by the init() method.
      */
     function reset() {
-        // noop
+        // Animate an explosion or blood or sometihng along those lines
+        //ctx.drawImage(Resources.get('images/BloodSplat1.png'), player.x-100, player.y-100);
+
+        // for now, reset player position to bottom middle of screen
+        player.x = 2 * 101;
+        player.y = 5 * 83 - 13;
     }
 
     /* Go ahead and load all of the images we know we're going to need to
@@ -172,7 +194,8 @@ var Engine = (function(global) {
         'images/water-block.png',
         'images/grass-block.png',
         'images/enemy-bug.png',
-        'images/char-boy.png'
+        'images/char-boy.png',
+        'images/BloodSplat1.png'
     ]);
     Resources.onReady(init);
 
