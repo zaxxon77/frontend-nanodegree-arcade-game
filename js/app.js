@@ -63,6 +63,17 @@ Player.prototype.render = function() {
     ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
 }
 
+var Collision = function(x,y) {
+    this.x = x *101;
+    this.y = (y * 83);
+    this.sprite = 'images/BloodSplat1.png';
+}
+
+// Draw the collision on the screen
+Collision.prototype.render = function() {
+    ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
+}
+
 // Now instantiate your objects.
 // Place all enemy objects in an array called allEnemies
 // Place the player object in a variable called player
@@ -74,6 +85,7 @@ var allEnemies = [enemy1, enemy2];
 
 var player = new Player(2,5);
 
+var collision = new Collision(-10,-10);
 
 
 

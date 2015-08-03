@@ -92,6 +92,10 @@ var Engine = (function(global) {
         allEnemies.forEach(function(enemy) {
             if (enemy.y === player.y-7 
                 && (enemy.x >= player.x-70 && enemy.x <= player.x+70)) {
+                // set collision location
+                collision.x = player.x-50;
+                collision.y = player.y-20;
+
                 reset();
             };
         });
@@ -150,7 +154,6 @@ var Engine = (function(global) {
             }
         }
 
-
         renderEntities();
     }
 
@@ -159,6 +162,12 @@ var Engine = (function(global) {
      * on your enemy and player entities within app.js
      */
     function renderEntities() {
+ 
+        //if (typeof collision != 'undefined') {
+        collision.render();
+        //    console.log('im here');
+        //};
+
         /* Loop through all of the objects within the allEnemies array and call
          * the render function you have defined.
          */
@@ -167,6 +176,7 @@ var Engine = (function(global) {
         });
 
         player.render();
+
     }
 
     // This function creates more enemies as they fall off the board
@@ -176,10 +186,7 @@ var Engine = (function(global) {
      * handle game reset states - maybe a new game menu or a game over screen
      * those sorts of things. It's only called once by the init() method.
      */
-    function reset() {
-        // Animate an explosion or blood or sometihng along those lines
-        //ctx.drawImage(Resources.get('images/BloodSplat1.png'), player.x-100, player.y-100);
-
+    function reset() {    
         // for now, reset player position to bottom middle of screen
         player.x = 2 * 101;
         player.y = 5 * 83 - 13;
