@@ -52,8 +52,6 @@ Player.prototype.update = function() {
     // limit movement to gameboard
     // TODO: link limits to gameboard creation of row/col
     this.handleInput = function(keyCode){
-            console.log('update', this.paused)
-
         // Check for pause input and handle
         if (keyCode === 'p' && !this.paused) {this.paused = true; return;};
         if (keyCode === 'p' && this.paused) {this.paused = false; return;};

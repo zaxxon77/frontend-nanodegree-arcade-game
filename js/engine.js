@@ -66,7 +66,6 @@ var Engine = (function(global) {
      * game loop.
      */
     function init() {
-        var paused = false;
         reset();
         lastTime = Date.now();
         main();
@@ -168,10 +167,7 @@ var Engine = (function(global) {
      */
     function renderEntities() {
  
-        //if (typeof collision != 'undefined') {
         collision.render();
-        //    console.log('im here');
-        //};
 
         /* Loop through all of the objects within the allEnemies array and call
          * the render function you have defined.
