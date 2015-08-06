@@ -25,6 +25,8 @@ var Engine = (function(global) {
         ctx = canvas.getContext('2d'),
         lastTime;
 
+    var paused = false;
+
     canvas.width = 505;
     canvas.height = 606;
     doc.body.appendChild(canvas);
@@ -64,6 +66,7 @@ var Engine = (function(global) {
      * game loop.
      */
     function init() {
+        var paused = false;
         reset();
         lastTime = Date.now();
         main();
@@ -79,10 +82,16 @@ var Engine = (function(global) {
      * on the entities themselves within your app.js file).
      */
     function update(dt) {
-        updateEntities(dt);
+        
+        // Don't update if game paused 
+        if (!player.paused) {updateEntities(dt);};
 
         // Check for collisions between player and enemies
         checkCollisions();
+
+        // Check for paused game after update and collisions are cheked
+        if (player.paused) {pause(dt)};
+        if (!player.paused) {resume(dt)};
     }
 
     // This function is called by update() to see if the player has collided
@@ -113,6 +122,19 @@ var Engine = (function(global) {
             enemy.update(dt);
         });
         player.update();
+    }
+
+    // Handle paused game states
+    function pause(dt) {
+        player.paused = true;
+        dt = 0;
+        // draw on screen if paused
+        //doc.font.draw(" - PAUSED - ", doc.system.width/2, 232, doc.Font.ALIGN.CENTER);
+    }
+
+    function resume(dt) {
+        player.paused = false;
+        dt = (Date.now() - lastTime) / 1000.0;
     }
 
     /* This function initially draws the "game level", it will then call

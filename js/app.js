@@ -44,17 +44,23 @@ var Player = function(x,y) {
     this.y = (y * 83) - 13;
 
     this.sprite = 'images/char-boy.png';
+    this.paused = false;
 }
 
-Player.prototype.update = function(dt) {
+Player.prototype.update = function() {
     // update player location based on keyboard input and 
     // limit movement to gameboard
     // TODO: link limits to gameboard creation of row/col
-    this.handleInput = function(keyCode){
-        if (keyCode === 'left' && this.x>1) {this.x = this.x - 101;};
-        if (keyCode === 'up' && this.y>1) {this.y = this.y - 83;};
-        if (keyCode === 'right' && this.x<(4*101)) {this.x = this.x + 101;};
-        if (keyCode === 'down' && this.y<(5*83-13)) {this.y = this.y + 83;};
+   this.handleInput = function(keyCode){
+        // Check for pause input and handle
+        if (keyCode === 'p' && !this.paused) {this.paused = true; return;};
+        if (keyCode === 'p' && this.paused) {this.paused = false; return;};
+        if (!this.paused) {
+            if (keyCode === 'left' && this.x>1) {this.x = this.x - 101;};
+            if (keyCode === 'up' && this.y>1) {this.y = this.y - 83;};
+            if (keyCode === 'right' && this.x<(4*101)) {this.x = this.x + 101;};
+            if (keyCode === 'down' && this.y<(5*83-13)) {this.y = this.y + 83;};           
+        };
     };
 }
 
@@ -96,7 +102,9 @@ document.addEventListener('keyup', function(e) {
         37: 'left',
         38: 'up',
         39: 'right',
-        40: 'down'
+        40: 'down',
+        32: 'space',
+        80: 'p'
     };
 
     player.handleInput(allowedKeys[e.keyCode]);
