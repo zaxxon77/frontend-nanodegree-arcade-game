@@ -88,10 +88,6 @@ var Engine = (function(global) {
 
         // Check for collisions between player and enemies
         checkCollisions();
-
-        // Check for paused game after update and collisions are cheked
-        if (player.paused) {pause(dt)};
-        if (!player.paused) {resume(dt)};
     }
 
     // This function is called by update() to see if the player has collided
@@ -122,19 +118,6 @@ var Engine = (function(global) {
             enemy.update(dt);
         });
         player.update();
-    }
-
-    // Handle paused game states
-    function pause(dt) {
-        player.paused = true;
-        dt = 0;
-        // draw on screen if paused
-        //doc.font.draw(" - PAUSED - ", doc.system.width/2, 232, doc.Font.ALIGN.CENTER);
-    }
-
-    function resume(dt) {
-        player.paused = false;
-        dt = (Date.now() - lastTime) / 1000.0;
     }
 
     /* This function initially draws the "game level", it will then call
