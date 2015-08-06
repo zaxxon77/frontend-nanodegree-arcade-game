@@ -178,6 +178,16 @@ var Engine = (function(global) {
 
         player.render();
 
+        if (player.paused) {
+            ctx.font = "36pt Impact";
+            ctx.lineWidth = 3;
+            ctx.textAlign="center";
+            ctx.fillStyle = "white";
+            ctx.fillText('- PAUSED -', canvas.width/2, canvas.height/2);
+            ctx.strokeStyle = "black";
+            ctx.strokeText('- PAUSED -', canvas.width/2, canvas.height/2);
+        };
+
     }
 
     // This function creates more enemies as they fall off the board
