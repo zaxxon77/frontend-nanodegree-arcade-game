@@ -87,7 +87,7 @@ Player.prototype.render = function() {
 
 var Collision = function(x,y) {
     this.x = x *101;
-    this.y = (y * 83);
+    this.y = y * 83;
     this.sprite = 'images/BloodSplat1.png';
 }
 
@@ -95,6 +95,21 @@ var Collision = function(x,y) {
 Collision.prototype.render = function() {
     ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
 }
+
+var Gem = function(x,y,color) {
+    this.x = x * 101;
+    this.y = (y * 83)-30;
+    var str1 = 'images/Gem-';
+    var str2 = color;
+    var str3 = '.png';
+    this.sprite =  str1.concat(str2,str3);
+}
+
+// Draw the gem on the screen
+Gem.prototype.render = function() {
+    ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
+}
+
 
 // Now instantiate your objects.
 // Place all enemy objects in an array called allEnemies
@@ -108,6 +123,10 @@ var allEnemies = [enemy1, enemy2];
 var player = new Player(2,5);
 
 var collision = new Collision(-10,-10);
+
+var gem1 = new Gem(1,1,'Orange');
+var gem2 = new Gem(2,2,'Green');
+var allGems = [gem1, gem2];
 
 
 

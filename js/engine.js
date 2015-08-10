@@ -68,7 +68,7 @@ var Engine = (function(global) {
      * game loop.
      */
     function init() {
-        //reset(); not sure this needs to be here
+        reset(); // initialize and set up gameplay
         lastTime = Date.now();
         main();
     }
@@ -89,6 +89,7 @@ var Engine = (function(global) {
 
         // Check for collisions between player and enemies
         checkCollisions();
+        checkGemSnatch();
 
         if (player.resetGame) {reset()};
     }
@@ -109,6 +110,21 @@ var Engine = (function(global) {
             };
         });
     }
+
+    function checkGemSnatch() {
+        allGems.forEach(function(gem) {
+            if (gem.y === player.y-17 
+                && (gem.x >= player.x-70 && gem.x <= player.x+70)) {
+                // move gem off screen
+                gem.x = -1000;
+                gem.y = -1000;
+
+                player.score = player.score + 100;
+            };
+        });
+    }
+
+
 
     /* This is called by the update function  and loops through all of the
      * objects within your allEnemies array as defined in app.js and calls
@@ -174,6 +190,11 @@ var Engine = (function(global) {
  
         collision.render();
 
+        // Loop through all Gem objects
+        allGems.forEach(function(gem) {
+            gem.render();
+        });
+
         /* Loop through all of the objects within the allEnemies array and call
          * the render function you have defined.
          */
@@ -202,12 +223,24 @@ var Engine = (function(global) {
         ctx.lineWidth = 2;
         ctx.textAlign="start";
         ctx.fillStyle = "white";
-        var lifeString = ['LIFE ', player.lives];
+        var str1 = 'LIFE  '
+        var str2 = player.lives.toString();
+        var lifeString = str1.concat(str2);
         ctx.fillText(lifeString, 20, canvas.height-30);
         ctx.strokeStyle = "black";
         ctx.strokeText(lifeString, 20, canvas.height-30);
 
         // Display Score
+        ctx.font = "24pt Impact";
+        ctx.lineWidth = 2;
+        ctx.textAlign="end";
+        ctx.fillStyle = "white";
+        var str1 = 'SCORE  '
+        var str2 = player.score.toString();
+        var scoreString = str1.concat(str2);
+        ctx.fillText(scoreString, canvas.width-20, 80);
+        ctx.strokeStyle = "black";
+        ctx.strokeText(scoreString, canvas.width-20, 80);
 
         // Display Game Over
         if (player.lives === 0) {
@@ -267,7 +300,11 @@ var Engine = (function(global) {
             'images/grass-block.png',
             'images/enemy-bug.png',
             'images/char-boy.png',
-            'images/BloodSplat1.png'
+            'images/BloodSplat1.png',
+            'images/Gem-Orange.png',
+            'images/Gem-Green.png',
+            'images/Gem-Blue.png',
+            'images/Heart.png'
         ]);
         Resources.onReady(init);
 
