@@ -91,6 +91,8 @@ var Engine = (function(global) {
         checkCollisions();
         checkGemSnatch();
 
+        if (player.gemsLeft === 0) {checkBackToBlock()};
+
         if (player.resetGame) {reset()};
     }
 
@@ -119,12 +121,15 @@ var Engine = (function(global) {
                 gem.x = -1000;
                 gem.y = -1000;
 
-                player.score = player.score + 100;
+                player.score = player.score + gem.worth;
+                player.gemsLeft--;
             };
         });
     }
 
-
+    function checkBackToBlock() {
+        if (player.x === (2*101) && player.y === (5*83-13)) {reset();};
+    }
 
     /* This is called by the update function  and loops through all of the
      * objects within your allEnemies array as defined in app.js and calls
@@ -186,6 +191,8 @@ var Engine = (function(global) {
      * tick. It's purpose is to then call the render functions you have defined
      * on your enemy and player entities within app.js
      */
+
+     // Pay attention to order of rendering to make sure layers appear correct
     function renderEntities() {
  
         collision.render();
@@ -194,6 +201,9 @@ var Engine = (function(global) {
         allGems.forEach(function(gem) {
             gem.render();
         });
+
+        // Magic block appears once all gems are collected
+        if (player.gemsLeft === 0) {renderMagicBlock()};
 
         /* Loop through all of the objects within the allEnemies array and call
          * the render function you have defined.
@@ -260,6 +270,10 @@ var Engine = (function(global) {
 
     }
 
+    // Render Magic Block for level advance
+    function renderMagicBlock() {
+        ctx.drawImage(Resources.get('images/Selector.png'), 2 * 101, 5 * 83-40);
+    }
 
     /* This function does nothing but it could have been a good place to
      * handle game reset states - maybe a new game menu or a game over screen
@@ -269,8 +283,9 @@ var Engine = (function(global) {
         // reset player position to bottom middle of screen
         player.x = 2 * 101;
         player.y = 5 * 83 - 13;
+
+        // Reset overall game after game over state
         if (player.resetGame === true) {
-            // Reset overall game after game over state
             player.score = 0;
             player.paused = false;
             player.resetGame = false;
@@ -286,6 +301,24 @@ var Engine = (function(global) {
 
             init();
         };
+
+        // Advance level if gems are collected 
+        if (player.gemsLeft === 0) {
+            player.level++;
+            //player.lives = 3;
+            player.gemsLeft = 2;
+            allEnemies.forEach(function(enemy) {
+                enemy.x = 0;
+                enemy.y = (Math.floor((Math.random() * 3) + 1) * 83) - 20;
+            });
+
+            // move collision off the screen
+            collision.x = -1000;
+            collision.y = -1000;
+            
+            init();
+
+        }
     }
 
 
@@ -304,7 +337,8 @@ var Engine = (function(global) {
             'images/Gem-Orange.png',
             'images/Gem-Green.png',
             'images/Gem-Blue.png',
-            'images/Heart.png'
+            'images/Heart.png',
+            'images/Selector.png'
         ]);
         Resources.onReady(init);
 

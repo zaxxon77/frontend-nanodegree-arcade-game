@@ -42,12 +42,13 @@ Enemy.prototype.render = function() {
 var Player = function(x,y) {
     this.x = x * 101;
     this.y = (y * 83) - 13;
-
     this.sprite = 'images/char-boy.png';
     this.paused = false;
     this.lives = 3;
     this.score = 0;
     this.resetGame = false;
+    this.gemsLeft = 2;
+    this.level = 0;
 }
 
 Player.prototype.update = function() {
@@ -68,7 +69,6 @@ Player.prototype.update = function() {
         if (keyCode === 'p' && !this.paused) {this.paused = true; return;};
         if (keyCode === 'p' && this.paused) {this.paused = false; return;};
 
-        
         // Change player position based on keyboard, limit movement to board dimensions
         if (!this.paused) {
             if (keyCode === 'left' && this.x>1) {this.x = this.x - 101;};
@@ -103,6 +103,10 @@ var Gem = function(x,y,color) {
     var str2 = color;
     var str3 = '.png';
     this.sprite =  str1.concat(str2,str3);
+    // set value of gem based on color
+    if (color === 'Orange') {this.worth = 50};
+    if (color === 'Green') {this.worth = 100};
+    if (color === 'Blue') {this.worth = 200};
 }
 
 // Draw the gem on the screen
@@ -124,8 +128,14 @@ var player = new Player(2,5);
 
 var collision = new Collision(-10,-10);
 
-var gem1 = new Gem(1,1,'Orange');
-var gem2 = new Gem(2,2,'Green');
+// Return a random integer over the range lowerlimit to upperlimit
+function getRandom(upperlimit,lowerlimit) {
+    return Math.floor((Math.random() * ((upperlimit+1)-lowerlimit)) + lowerlimit);
+}
+
+var allGemColors = ['Orange', 'Green', 'Blue'];
+var gem1 = new Gem(getRandom(4,0),getRandom(4,1),allGemColors[getRandom(2,0)]);
+var gem2 = new Gem(getRandom(4,0),getRandom(4,1),allGemColors[getRandom(2,0)]);
 var allGems = [gem1, gem2];
 
 
