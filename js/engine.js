@@ -31,6 +31,8 @@ var Engine = (function(global) {
     canvas.height = 606;
     doc.body.appendChild(canvas);
 
+    reload();
+
     /* This function serves as the kickoff point for the game loop itself
      * and handles properly calling the update and render methods.
      */
@@ -66,7 +68,7 @@ var Engine = (function(global) {
      * game loop.
      */
     function init() {
-        reset();
+        //reset(); not sure this needs to be here
         lastTime = Date.now();
         main();
     }
@@ -83,10 +85,12 @@ var Engine = (function(global) {
     function update(dt) {
         
         // Don't update if game paused 
-        if (!player.paused) {updateEntities(dt);};
+        if (!player.paused && player.lives>0 ) {updateEntities(dt);};
 
         // Check for collisions between player and enemies
         checkCollisions();
+
+        if (player.resetGame) {reset()};
     }
 
     // This function is called by update() to see if the player has collided
@@ -100,6 +104,7 @@ var Engine = (function(global) {
                 collision.x = player.x-50;
                 collision.y = player.y-20;
 
+                player.lives = player.lives - 1;
                 reset();
             };
         });
@@ -178,7 +183,11 @@ var Engine = (function(global) {
 
         player.render();
 
-        if (player.paused) {
+        // TODO: streamline text displays into function, consider moving to 
+        // player.render()
+
+        // Display PAUSED to screen
+        if (player.paused && player.lives > 0) {
             ctx.font = "36pt Impact";
             ctx.lineWidth = 3;
             ctx.textAlign="center";
@@ -188,34 +197,78 @@ var Engine = (function(global) {
             ctx.strokeText('- PAUSED -', canvas.width/2, canvas.height/2);
         };
 
+        // Display Lives
+        ctx.font = "24pt Impact";
+        ctx.lineWidth = 2;
+        ctx.textAlign="start";
+        ctx.fillStyle = "white";
+        var lifeString = ['LIFE ', player.lives];
+        ctx.fillText(lifeString, 20, canvas.height-30);
+        ctx.strokeStyle = "black";
+        ctx.strokeText(lifeString, 20, canvas.height-30);
+
+        // Display Score
+
+        // Display Game Over
+        if (player.lives === 0) {
+            ctx.font = "36pt Impact";
+            ctx.lineWidth = 3;
+            ctx.textAlign="center";
+            ctx.fillStyle = "white";
+            ctx.fillText('- GAME OVER -', canvas.width/2, canvas.height/2);
+            ctx.strokeStyle = "black";
+            ctx.strokeText('- GAME OVER -', canvas.width/2, canvas.height/2);
+            ctx.fillStyle = "white";
+            ctx.fillText('- REPLAY? (r) -', canvas.width/2, (canvas.height/2 + 50));
+            ctx.strokeStyle = "black";
+            ctx.strokeText('- REPLAY? (r) -', canvas.width/2, (canvas.height/2 + 50));
+
+        };
+
     }
 
-    // This function creates more enemies as they fall off the board
-    //function getMoreEnemies() {}
 
     /* This function does nothing but it could have been a good place to
      * handle game reset states - maybe a new game menu or a game over screen
      * those sorts of things. It's only called once by the init() method.
      */
     function reset() {    
-        // for now, reset player position to bottom middle of screen
+        // reset player position to bottom middle of screen
         player.x = 2 * 101;
         player.y = 5 * 83 - 13;
+        if (player.resetGame === true) {
+            // Reset overall game after game over state
+            player.score = 0;
+            player.paused = false;
+            player.resetGame = false;
+            player.lives = 3;
+
+            // move collision off the screen
+            collision.x = -1000;
+            collision.y = -1000;
+
+
+            init();
+        };
     }
 
-    /* Go ahead and load all of the images we know we're going to need to
-     * draw our game level. Then set init as the callback method, so that when
-     * all of these images are properly loaded our game will start.
-     */
-    Resources.load([
-        'images/stone-block.png',
-        'images/water-block.png',
-        'images/grass-block.png',
-        'images/enemy-bug.png',
-        'images/char-boy.png',
-        'images/BloodSplat1.png'
-    ]);
-    Resources.onReady(init);
+
+    function reload() {
+        /* Go ahead and load all of the images we know we're going to need to
+         * draw our game level. Then set init as the callback method, so that when
+         * all of these images are properly loaded our game will start.
+         */
+        Resources.load([
+            'images/stone-block.png',
+            'images/water-block.png',
+            'images/grass-block.png',
+            'images/enemy-bug.png',
+            'images/char-boy.png',
+            'images/BloodSplat1.png'
+        ]);
+        Resources.onReady(init);
+
+    }
 
     /* Assign the canvas' context object to the global variable (the window
      * object when run in a browser) so that developer's can use it more easily

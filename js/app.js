@@ -45,6 +45,9 @@ var Player = function(x,y) {
 
     this.sprite = 'images/char-boy.png';
     this.paused = false;
+    this.lives = 3;
+    this.score = 0;
+    this.resetGame = false;
 }
 
 Player.prototype.update = function() {
@@ -52,9 +55,21 @@ Player.prototype.update = function() {
     // limit movement to gameboard
     // TODO: link limits to gameboard creation of row/col
     this.handleInput = function(keyCode){
+        // Pause game at game over, only listen for reset 'r' key after that
+        if (this.lives === 0) {
+            this.paused = true;
+            if (keyCode === 'r') {
+                this.resetGame = true;
+            };
+            return;
+        };
+
         // Check for pause input and handle
         if (keyCode === 'p' && !this.paused) {this.paused = true; return;};
         if (keyCode === 'p' && this.paused) {this.paused = false; return;};
+
+        
+        // Change player position based on keyboard, limit movement to board dimensions
         if (!this.paused) {
             if (keyCode === 'left' && this.x>1) {this.x = this.x - 101;};
             if (keyCode === 'up' && this.y>1) {this.y = this.y - 83;};
@@ -67,6 +82,7 @@ Player.prototype.update = function() {
 // Draw the player on the screen, required method for game
 Player.prototype.render = function() {
     ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
+
 }
 
 var Collision = function(x,y) {
@@ -104,7 +120,8 @@ document.addEventListener('keyup', function(e) {
         39: 'right',
         40: 'down',
         32: 'space',
-        80: 'p'
+        80: 'p',
+        82: 'r'
     };
 
     player.handleInput(allowedKeys[e.keyCode]);
