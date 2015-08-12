@@ -311,7 +311,6 @@ var Engine = (function(global) {
             player.level = 0;
 
             allEnemies = [];
-
             allEnemies = createNewEnemy(allEnemies);
             // reset enemies
             // allEnemies.forEach(function(enemy) {
@@ -344,13 +343,9 @@ var Engine = (function(global) {
             }); 
 
             allEnemies = createNewEnemy(allEnemies);
-            //var enemy3 = new Enemy(5,getRandom(3,1),-1);
-            //var allEnemies = allEnemies.concat(enemy3);
-
 
             allEnemies.forEach(function(enemy) {
-                enemy.x = 0;
-                enemy.y = (Math.floor((Math.random() * 3) + 1) * 83) - 20;
+                enemy.restart();
             });
 
             init();

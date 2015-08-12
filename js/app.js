@@ -26,17 +26,26 @@ Enemy.prototype.update = function(dt) {
     // 3. randomize which line it shows up on next << this one!
     if (this.x>5*101 && this.speed>0) {
         this.x = -101;
-        this.y = (Math.floor((Math.random() * 3) + 1) * 83) - 20;
+        this.y = (getRandom(3,1) * 83) - 20;
     };
     if (this.x<-101 && this.speed<0) {
         this.x = 6*101;
-        this.y = (Math.floor((Math.random() * 3) + 1) * 83) - 20;
+        this.y = (getRandom(3,1) * 83) - 20;
     };
 }
 
 // Draw the enemy on the screen, required method for game
 Enemy.prototype.render = function() {
     ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
+}
+
+Enemy.prototype.restart = function() {
+    if (this.speed > 0) {
+        this.x = -101;
+    } else {
+        this.x = 6*101;
+    };
+    this.y = (getRandom(3,1) * 83) - 20;
 }
 
 // Now write your own player class
