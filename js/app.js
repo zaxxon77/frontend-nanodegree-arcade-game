@@ -82,9 +82,9 @@ Player.prototype.update = function() {
 // Draw the player on the screen, required method for game
 Player.prototype.render = function() {
     ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
-
 }
 
+// Create Collision class
 var Collision = function(x,y) {
     this.x = x *101;
     this.y = y * 83;
@@ -96,22 +96,42 @@ Collision.prototype.render = function() {
     ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
 }
 
+// Create Gem class
 var Gem = function(x,y,color) {
     this.x = x * 101;
     this.y = (y * 83)-30;
     var str1 = 'images/Gem-';
-    var str2 = color;
+    this.color = color;
     var str3 = '.png';
-    this.sprite =  str1.concat(str2,str3);
+    this.sprite =  str1.concat(this.color,str3);
     // set value of gem based on color
-    if (color === 'Orange') {this.worth = 50};
-    if (color === 'Green') {this.worth = 100};
-    if (color === 'Blue') {this.worth = 200};
+    this.worth = getGemValue(this);
+}
+
+// Functinalize gem values to set appropriate value when random color is drawn
+// TODO: consider changing this to a prototype function
+function getGemValue(gem) {
+    if (gem.color === 'Orange') {gem.worth = 50};
+    if (gem.color === 'Green') {gem.worth = 100};
+    if (gem.color === 'Blue') {gem.worth = 200};
+    return gem.worth;
 }
 
 // Draw the gem on the screen
 Gem.prototype.render = function() {
     ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
+}
+
+// consider creating reset prototype for each class
+Gem.prototype.reset = function() {
+    this.x = getRandom(4,0) * 101;
+    this.y = (getRandom(4,1) * 83)-30;
+    var str1 = 'images/Gem-';
+    this.color = allGemColors[getRandom(2,0)];
+    var str3 = '.png';
+    this.sprite =  str1.concat(this.color,str3);
+    this.worth = getGemValue(this);
+    console.log('this color', this.color, ' color', this.worth);
 }
 
 
@@ -136,8 +156,7 @@ function getRandom(upperlimit,lowerlimit) {
 var allGemColors = ['Orange', 'Green', 'Blue'];
 var gem1 = new Gem(getRandom(4,0),getRandom(4,1),allGemColors[getRandom(2,0)]);
 var gem2 = new Gem(getRandom(4,0),getRandom(4,1),allGemColors[getRandom(2,0)]);
-var allGems = [gem1, gem2];
-
+var allGems = [gem1, gem2]; // consider sorting gems by row so they render properly
 
 
 // This listens for key presses and sends the keys to your

@@ -89,11 +89,11 @@ var Engine = (function(global) {
 
         // Check for collisions between player and enemies
         checkCollisions();
-        checkGemSnatch();
+        checkGemCollect();
 
         if (player.gemsLeft === 0) {checkBackToBlock()};
 
-        if (player.resetGame) {reset()};
+        if (player.resetGame) {reset();};
     }
 
     // This function is called by update() to see if the player has collided
@@ -113,7 +113,8 @@ var Engine = (function(global) {
         });
     }
 
-    function checkGemSnatch() {
+    // This function checks to see if player has overlapped with or collected a gem
+    function checkGemCollect() {
         allGems.forEach(function(gem) {
             if (gem.y === player.y-17 
                 && (gem.x >= player.x-70 && gem.x <= player.x+70)) {
@@ -183,7 +184,6 @@ var Engine = (function(global) {
                 ctx.drawImage(Resources.get(rowImages[row]), col * 101, row * 83);
             }
         }
-
         renderEntities();
     }
 
@@ -214,8 +214,7 @@ var Engine = (function(global) {
 
         player.render();
 
-        // TODO: streamline text displays into function, consider moving to 
-        // player.render()
+        // textRender(); // call text display function in app.js
 
         // Display PAUSED to screen
         if (player.paused && player.lives > 0) {
@@ -239,6 +238,19 @@ var Engine = (function(global) {
         ctx.fillText(lifeString, 20, canvas.height-30);
         ctx.strokeStyle = "black";
         ctx.strokeText(lifeString, 20, canvas.height-30);
+
+        // Display Level
+        ctx.font = "24pt Impact";
+        ctx.lineWidth = 2;
+        ctx.textAlign="end";
+        ctx.fillStyle = "white";
+        var str1 = 'Level  '
+        var str2 = player.level.toString();
+        var levelString = str1.concat(str2);
+        ctx.fillText(levelString, canvas.width-20, canvas.height-30);
+        ctx.strokeStyle = "black";
+        ctx.strokeText(levelString, canvas.width-20, canvas.height-30);
+
 
         // Display Score
         ctx.font = "24pt Impact";
@@ -265,7 +277,6 @@ var Engine = (function(global) {
             ctx.fillText('- REPLAY? (r) -', canvas.width/2, (canvas.height/2 + 50));
             ctx.strokeStyle = "black";
             ctx.strokeText('- REPLAY? (r) -', canvas.width/2, (canvas.height/2 + 50));
-
         };
 
     }
@@ -290,14 +301,21 @@ var Engine = (function(global) {
             player.paused = false;
             player.resetGame = false;
             player.lives = 3;
+            player.gems = 2;
+
+            // reset enemies
             allEnemies.forEach(function(enemy) {
                 enemy.x = 0;
                 enemy.y = (Math.floor((Math.random() * 3) + 1) * 83) - 20;
             });
 
-            // move collision off the screen
+            // reset collisions, move collision off the screen
             collision.x = -1000;
             collision.y = -1000;
+            
+            allGems.forEach(function(gem) {
+                gem.reset();
+            }); 
 
             init();
         };
@@ -305,19 +323,22 @@ var Engine = (function(global) {
         // Advance level if gems are collected 
         if (player.gemsLeft === 0) {
             player.level++;
-            //player.lives = 3;
             player.gemsLeft = 2;
+
+            // reset collisions, move collision off the screen
+            collision.x = -1000;
+            collision.y = -1000;
+
+            allGems.forEach(function(gem) {
+                gem.reset();
+            }); 
+
             allEnemies.forEach(function(enemy) {
                 enemy.x = 0;
                 enemy.y = (Math.floor((Math.random() * 3) + 1) * 83) - 20;
             });
 
-            // move collision off the screen
-            collision.x = -1000;
-            collision.y = -1000;
-            
             init();
-
         }
     }
 
@@ -341,7 +362,6 @@ var Engine = (function(global) {
             'images/Selector.png'
         ]);
         Resources.onReady(init);
-
     }
 
     /* Assign the canvas' context object to the global variable (the window
