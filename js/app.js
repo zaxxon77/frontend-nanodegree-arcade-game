@@ -24,8 +24,12 @@ Enemy.prototype.update = function(dt) {
     // 1. overflow to next stone line
     // 2. reset on same line
     // 3. randomize which line it shows up on next << this one!
-    if (this.x>5*101) {
-        this.x = -101
+    if (this.x>5*101 && this.speed>0) {
+        this.x = -101;
+        this.y = (Math.floor((Math.random() * 3) + 1) * 83) - 20;
+    };
+    if (this.x<-101 && this.speed<0) {
+        this.x = 6*101;
         this.y = (Math.floor((Math.random() * 3) + 1) * 83) - 20;
     };
 }
@@ -48,7 +52,7 @@ var Player = function(x,y) {
     this.score = 0;
     this.resetGame = false;
     this.gemsLeft = 2;
-    this.level = 0;
+    this.level = 0; 
 }
 
 Player.prototype.update = function() {
@@ -131,20 +135,34 @@ Gem.prototype.reset = function() {
     var str3 = '.png';
     this.sprite =  str1.concat(this.color,str3);
     this.worth = getGemValue(this);
-    console.log('this color', this.color, ' color', this.worth);
 }
 
 
 // Now instantiate your objects.
 // Place all enemy objects in an array called allEnemies
 // Place the player object in a variable called player
+var player = new Player(2,5);
 
 // TODO: Modify number & speed of enemies based on level
-var enemy1 = new Enemy(0,1,1);
-var enemy2 = new Enemy(0,2,2);
-var allEnemies = [enemy1, enemy2];
+// var enemy1 = new Enemy(0,1,1);
+// var enemy2 = new Enemy(0,2,2);
+// var allEnemies = [enemy1, enemy2];
 
-var player = new Player(2,5);
+function createNewEnemy(allEnemies) {
+    var speedScale = Math.sqrt((player.level+1)*0.8);
+    console.log(speedScale);
+    //if (speedScale === 0) {speedScale = 0.8};
+    var startSide = Math.round(Math.random())*5;
+    var direction = Math.round(Math.random());
+    if (direction === 0) {direction = -1};
+
+    // instantiate new enemy and concatinate to array
+    var newEnemy = new Enemy(startSide,getRandom(3,1),direction*speedScale);
+    allEnemies = allEnemies.concat(newEnemy);
+
+    return allEnemies;
+}
+
 
 var collision = new Collision(-10,-10);
 

@@ -295,19 +295,29 @@ var Engine = (function(global) {
         player.x = 2 * 101;
         player.y = 5 * 83 - 13;
 
-        // Reset overall game after game over state
+        // first time through
+        if (player.level === 0) {
+            allEnemies = [];
+            allEnemies = createNewEnemy(allEnemies);
+        };
+
+        // Reset overall game upon player request or lives lost
         if (player.resetGame === true) {
             player.score = 0;
             player.paused = false;
             player.resetGame = false;
             player.lives = 3;
             player.gemsLeft = 2;
+            player.level = 0;
 
+            allEnemies = [];
+
+            allEnemies = createNewEnemy(allEnemies);
             // reset enemies
-            allEnemies.forEach(function(enemy) {
-                enemy.x = 0;
-                enemy.y = (Math.floor((Math.random() * 3) + 1) * 83) - 20;
-            });
+            // allEnemies.forEach(function(enemy) {
+            //     enemy.x = 0;
+            //     enemy.y = (Math.floor((Math.random() * 3) + 1) * 83) - 20;
+            // });
 
             // reset collisions, move collision off the screen
             collision.x = -1000;
@@ -332,6 +342,11 @@ var Engine = (function(global) {
             allGems.forEach(function(gem) {
                 gem.reset();
             }); 
+
+            allEnemies = createNewEnemy(allEnemies);
+            //var enemy3 = new Enemy(5,getRandom(3,1),-1);
+            //var allEnemies = allEnemies.concat(enemy3);
+
 
             allEnemies.forEach(function(enemy) {
                 enemy.x = 0;
