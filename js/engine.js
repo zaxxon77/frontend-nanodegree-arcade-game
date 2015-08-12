@@ -301,7 +301,7 @@ var Engine = (function(global) {
             player.paused = false;
             player.resetGame = false;
             player.lives = 3;
-            player.gems = 2;
+            player.gemsLeft = 2;
 
             // reset enemies
             allEnemies.forEach(function(enemy) {
