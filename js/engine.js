@@ -108,6 +108,7 @@ var Engine = (function(global) {
                 collision.y = player.y-20;
 
                 player.lives = player.lives - 1;
+                player.resetOnCollision = true
                 reset();
             };
         });
@@ -129,7 +130,10 @@ var Engine = (function(global) {
     }
 
     function checkBackToBlock() {
-        if (player.x === (1*101) && player.y === (5*83-13)) {reset();};
+        if (player.x === (1*101) && player.y === (5*83-13)) {
+            player.resetOnLevelUp = true;
+            reset();
+        };
     }
 
     /* This is called by the update function  and loops through all of the
@@ -203,7 +207,9 @@ var Engine = (function(global) {
         });
 
         // Magic block appears once all gems are collected
-        if (player.gemsLeft === 0) {renderMagicBlock()};
+        if (player.gemsLeft === 0) {
+            renderMagicBlock();
+        };
 
         /* Loop through all of the objects within the allEnemies array and call
          * the render function you have defined.
@@ -228,17 +234,22 @@ var Engine = (function(global) {
      * those sorts of things. It's only called once by the init() method.
      */
     function reset() {    
-        // reset player position to bottom middle of screen
-        player.x = 2 * 101;
-        player.y = 5 * 83 - 13;
-
         // first time through
         if (player.level === 0) {
             allEnemies = [];
             allEnemies = createNewEnemy(allEnemies);
         };
 
-        // Reset overall game upon player request or lives lost
+        // reset player position to bottom middle of screen
+        // player.resetOnCollision
+        player.x = 2 * 101;
+        player.y = 5 * 83 - 13;
+
+        if (player.resetOnCollision === true) {
+            player.resetOnCollision = false
+        };
+
+        // Reset overall game upon player request after all lives lost
         if (player.resetGame === true) {
             player.score = 0;
             player.paused = false;
@@ -267,7 +278,9 @@ var Engine = (function(global) {
         };
 
         // Advance level if gems are collected 
-        if (player.gemsLeft === 0) {
+        // player.resetOnLevelUp
+        if (player.resetOnLevelUp === true) {
+            player.resetOnLevelUp = false;
             player.level++;
             player.gemsLeft = 2;
 

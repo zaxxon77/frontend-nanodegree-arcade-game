@@ -5,9 +5,6 @@ var Enemy = function(x,y,speed) {
     this.x = x * 101;
     this.y = (y * 83) - 20;
     this.speed = speed * 100;
-
-    // The image/sprite for our enemies, this uses
-    // a helper we've provided to easily load images
     this.sprite = 'images/enemy-bug.png';
 }
 
@@ -34,11 +31,21 @@ Enemy.prototype.update = function(dt) {
     };
 }
 
-// Draw the enemy on the screen, required method for game
+// Draw the enemy on the screen, flip and translate image if
+// bug is travelling in right-to-left direction
 Enemy.prototype.render = function() {
+    ctx.save();
+    if (this.speed < 0) {
+        ctx.scale(-1,1); 
+        ctx.drawImage(Resources.get(this.sprite), -this.x-101, this.y);
+    } else {
     ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
+    };
+    ctx.restore();
+
 }
 
+// Restart enemy offscreen and at random row
 Enemy.prototype.restart = function() {
     if (this.speed > 0) {
         this.x = -101;
@@ -48,10 +55,7 @@ Enemy.prototype.restart = function() {
     this.y = (getRandom(3,1) * 83) - 20;
 }
 
-// Now write your own player class
-// This class requires an update(), render() and
-// a handleInput() method.
-
+// Player class
 var Player = function(x,y) {
     this.x = x * 101;
     this.y = (y * 83) - 13;
@@ -59,9 +63,11 @@ var Player = function(x,y) {
     this.paused = false;
     this.lives = 3;
     this.score = 0;
-    this.resetGame = false;
     this.gemsLeft = 2;
-    this.level = 0; 
+    this.level = 0;
+    this.resetOnCollision = false;
+    this.resetGame = false;
+    this.resetOnLevelUp = false;
 }
 
 Player.prototype.update = function() {
@@ -158,9 +164,10 @@ var player = new Player(2,5);
 // var allEnemies = [enemy1, enemy2];
 
 function createNewEnemy(allEnemies) {
-    var speedScale = Math.sqrt((player.level+1)*0.8);
+    // randomize attributes of enemy and scale with player.level
+    var speedScale = Math.sqrt((player.level+1)*0.8); 
     console.log(speedScale);
-    //if (speedScale === 0) {speedScale = 0.8};
+    speedScale = Math.min(speedScale, 2.5); // upper limit to speed
     var startSide = Math.round(Math.random())*5;
     var direction = Math.round(Math.random());
     if (direction === 0) {direction = -1};
