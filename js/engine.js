@@ -129,7 +129,7 @@ var Engine = (function(global) {
     }
 
     function checkBackToBlock() {
-        if (player.x === (2*101) && player.y === (5*83-13)) {reset();};
+        if (player.x === (1*101) && player.y === (5*83-13)) {reset();};
     }
 
     /* This is called by the update function  and loops through all of the
@@ -214,76 +214,13 @@ var Engine = (function(global) {
 
         player.render();
 
-        // textRender(); // call text display function in app.js
-
-        // Display PAUSED to screen
-        if (player.paused && player.lives > 0) {
-            ctx.font = "36pt Impact";
-            ctx.lineWidth = 3;
-            ctx.textAlign="center";
-            ctx.fillStyle = "white";
-            ctx.fillText('- PAUSED -', canvas.width/2, canvas.height/2);
-            ctx.strokeStyle = "black";
-            ctx.strokeText('- PAUSED -', canvas.width/2, canvas.height/2);
-        };
-
-        // Display Lives
-        ctx.font = "24pt Impact";
-        ctx.lineWidth = 2;
-        ctx.textAlign="start";
-        ctx.fillStyle = "white";
-        var str1 = 'LIFE  '
-        var str2 = player.lives.toString();
-        var lifeString = str1.concat(str2);
-        ctx.fillText(lifeString, 20, canvas.height-30);
-        ctx.strokeStyle = "black";
-        ctx.strokeText(lifeString, 20, canvas.height-30);
-
-        // Display Level
-        ctx.font = "24pt Impact";
-        ctx.lineWidth = 2;
-        ctx.textAlign="end";
-        ctx.fillStyle = "white";
-        var str1 = 'Level  '
-        var str2 = player.level.toString();
-        var levelString = str1.concat(str2);
-        ctx.fillText(levelString, canvas.width-20, canvas.height-30);
-        ctx.strokeStyle = "black";
-        ctx.strokeText(levelString, canvas.width-20, canvas.height-30);
-
-
-        // Display Score
-        ctx.font = "24pt Impact";
-        ctx.lineWidth = 2;
-        ctx.textAlign="end";
-        ctx.fillStyle = "white";
-        var str1 = 'SCORE  '
-        var str2 = player.score.toString();
-        var scoreString = str1.concat(str2);
-        ctx.fillText(scoreString, canvas.width-20, 80);
-        ctx.strokeStyle = "black";
-        ctx.strokeText(scoreString, canvas.width-20, 80);
-
-        // Display Game Over
-        if (player.lives === 0) {
-            ctx.font = "36pt Impact";
-            ctx.lineWidth = 3;
-            ctx.textAlign="center";
-            ctx.fillStyle = "white";
-            ctx.fillText('- GAME OVER -', canvas.width/2, canvas.height/2);
-            ctx.strokeStyle = "black";
-            ctx.strokeText('- GAME OVER -', canvas.width/2, canvas.height/2);
-            ctx.fillStyle = "white";
-            ctx.fillText('- REPLAY? (r) -', canvas.width/2, (canvas.height/2 + 50));
-            ctx.strokeStyle = "black";
-            ctx.strokeText('- REPLAY? (r) -', canvas.width/2, (canvas.height/2 + 50));
-        };
-
+        textRender(); // call text display function in app.js
     }
 
     // Render Magic Block for level advance
     function renderMagicBlock() {
-        ctx.drawImage(Resources.get('images/Selector.png'), 2 * 101, 5 * 83-40);
+    //     ctx.drawImage(Resources.get('images/Selector.png'), getRandom(4,0) * 101, getRandom(5,0) * 83-40);
+        ctx.drawImage(Resources.get('images/Selector.png'), 1 * 101, 5 * 83-40);
     }
 
     /* This function does nothing but it could have been a good place to
@@ -379,4 +316,5 @@ var Engine = (function(global) {
      * from within their app.js files.
      */
     global.ctx = ctx;
+    global.canvas = canvas;
 })(this);

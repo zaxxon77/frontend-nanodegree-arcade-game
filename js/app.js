@@ -201,3 +201,68 @@ document.addEventListener('keyup', function(e) {
 
     player.handleInput(allowedKeys[e.keyCode]);
 });
+
+function textRender() {
+    if (player.paused && player.lives > 0) {
+        ctx.font = "36pt Impact";
+        ctx.lineWidth = 3;
+        ctx.textAlign="center";
+        ctx.fillStyle = "white";
+        ctx.fillText('- PAUSED -', canvas.width/2, canvas.height/2);
+        ctx.strokeStyle = "black";
+        ctx.strokeText('- PAUSED -', canvas.width/2, canvas.height/2);
+    };
+
+    // Display Lives
+    ctx.font = "24pt Impact";
+    ctx.lineWidth = 2;
+    ctx.textAlign="start";
+    ctx.fillStyle = "white";
+    var str1 = 'LIFE  '
+    var str2 = player.lives.toString();
+    var lifeString = str1.concat(str2);
+    ctx.fillText(lifeString, 20, canvas.height-30);
+    ctx.strokeStyle = "black";
+    ctx.strokeText(lifeString, 20, canvas.height-30);
+
+    // Display Level
+    ctx.font = "24pt Impact";
+    ctx.lineWidth = 2;
+    ctx.textAlign="end";
+    ctx.fillStyle = "white";
+    var str1 = 'Level  '
+    var str2 = player.level.toString();
+    var levelString = str1.concat(str2);
+    ctx.fillText(levelString, canvas.width-20, canvas.height-30);
+    ctx.strokeStyle = "black";
+    ctx.strokeText(levelString, canvas.width-20, canvas.height-30);
+
+
+    // Display Score
+    ctx.font = "24pt Impact";
+    ctx.lineWidth = 2;
+    ctx.textAlign="end";
+    ctx.fillStyle = "white";
+    var str1 = 'SCORE  '
+    var str2 = player.score.toString();
+    var scoreString = str1.concat(str2);
+    ctx.fillText(scoreString, canvas.width-20, 80);
+    ctx.strokeStyle = "black";
+    ctx.strokeText(scoreString, canvas.width-20, 80);
+
+    // Display Game Over
+    if (player.lives === 0) {
+        ctx.font = "36pt Impact";
+        ctx.lineWidth = 3;
+        ctx.textAlign="center";
+        ctx.fillStyle = "white";
+        ctx.fillText('- GAME OVER -', canvas.width/2, canvas.height/2);
+        ctx.strokeStyle = "black";
+        ctx.strokeText('- GAME OVER -', canvas.width/2, canvas.height/2);
+        ctx.fillStyle = "white";
+        ctx.fillText('- REPLAY? (r) -', canvas.width/2, (canvas.height/2 + 50));
+        ctx.strokeStyle = "black";
+        ctx.strokeText('- REPLAY? (r) -', canvas.width/2, (canvas.height/2 + 50));
+    };
+
+}
