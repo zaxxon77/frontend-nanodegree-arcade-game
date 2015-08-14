@@ -152,45 +152,40 @@ Gem.prototype.reset = function() {
     this.worth = getGemValue(this);
 }
 
-
-// Now instantiate your objects.
-// Place all enemy objects in an array called allEnemies
-// Place the player object in a variable called player
-var player = new Player(2,5);
-
-// TODO: Modify number & speed of enemies based on level
-// var enemy1 = new Enemy(0,1,1);
-// var enemy2 = new Enemy(0,2,2);
-// var allEnemies = [enemy1, enemy2];
-
-function createNewEnemy(allEnemies) {
-    // randomize attributes of enemy and scale with player.level
-    var speedScale = Math.sqrt((player.level+1)*0.8); 
-    console.log(speedScale);
-    speedScale = Math.min(speedScale, 2.5); // upper limit to speed
-    var startSide = Math.round(Math.random())*5;
-    var direction = Math.round(Math.random());
-    if (direction === 0) {direction = -1};
-
-    // instantiate new enemy and concatinate to array
-    var newEnemy = new Enemy(startSide,getRandom(3,1),direction*speedScale);
-    allEnemies = allEnemies.concat(newEnemy);
-
-    return allEnemies;
-}
-
-
-var collision = new Collision(-10,-10);
-
 // Return a random integer over the range lowerlimit to upperlimit
 function getRandom(upperlimit,lowerlimit) {
     return Math.floor((Math.random() * ((upperlimit+1)-lowerlimit)) + lowerlimit);
 }
 
+
+//  Instantiate objects
+var player = new Player(2,5);
+var collision = new Collision(-10,-10);
 var allGemColors = ['Orange', 'Green', 'Blue'];
 var gem1 = new Gem(getRandom(4,0),getRandom(4,1),allGemColors[getRandom(2,0)]);
 var gem2 = new Gem(getRandom(4,0),getRandom(4,1),allGemColors[getRandom(2,0)]);
 var allGems = [gem1, gem2]; // consider sorting gems by row so they render properly
+
+// Functionalize instantiation of enemy object,
+// randomize attributes of enemy and scale with player.level
+function createNewEnemy(allEnemies) {
+    var speedScale = Math.sqrt((player.level+1)*0.8); 
+    console.log(speedScale);
+    speedScale = Math.min(speedScale, 2.5); // upper limit to speed
+    var direction = Math.round(Math.random());
+    if (direction === 0) {
+        direction = -1;
+        var startSquare = 5;
+    } else {
+        var startSquare = -1;
+    };
+
+    // instantiate new enemy and concatinate to array
+    var newEnemy = new Enemy(startSquare,getRandom(3,1),direction*speedScale);
+    allEnemies = allEnemies.concat(newEnemy);
+
+    return allEnemies;
+}
 
 
 // This listens for key presses and sends the keys to your
@@ -271,5 +266,4 @@ function textRender() {
         ctx.strokeStyle = "black";
         ctx.strokeText('- REPLAY? (r) -', canvas.width/2, (canvas.height/2 + 50));
     };
-
 }
