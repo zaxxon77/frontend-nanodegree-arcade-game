@@ -6,6 +6,7 @@ var Enemy = function(x,y,speed) {
     this.y = (y * 83) - 20;
     this.speed = speed * 100;
     this.sprite = 'images/enemy-bug.png';
+    this.isAThreat = true;
 }
 
 // Update the enemy's position, required method for game
@@ -35,6 +36,7 @@ Enemy.prototype.update = function(dt) {
 // bug is travelling in right-to-left direction
 Enemy.prototype.render = function() {
     ctx.save();
+    //ctx.globalAlpha = ;
     if (this.speed < 0) {
         ctx.scale(-1,1); 
         ctx.drawImage(Resources.get(this.sprite), -this.x-101, this.y);
@@ -115,6 +117,18 @@ Collision.prototype.render = function() {
     ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
 }
 
+// Create Star class
+var Star = function(x,y) {
+    this.x = x *101;
+    this.y = y * 83-10;
+    this.sprite = 'images/Star.png';
+}
+
+// Draw the collision on the screen
+Star.prototype.render = function() {
+    ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
+}
+
 // Create Gem class
 var Gem = function(x,y,color) {
     this.x = x * 101;
@@ -162,9 +176,14 @@ function getRandom(upperlimit,lowerlimit) {
 var player = new Player(2,5);
 var collision = new Collision(-10,-10);
 var allGemColors = ['Orange', 'Green', 'Blue'];
+var star = new Star(getRandom(4,0),getRandom(4,0));
 var gem1 = new Gem(getRandom(4,0),getRandom(4,1),allGemColors[getRandom(2,0)]);
 var gem2 = new Gem(getRandom(4,0),getRandom(4,1),allGemColors[getRandom(2,0)]);
-var allGems = [gem1, gem2]; // consider sorting gems by row so they render properly
+var allGems = [gem1, gem2]; 
+// Sort gems by row so they render properly
+allGems.sort(function(a,b){
+    return a.y - b.y;
+})
 
 // Functionalize instantiation of enemy object,
 // randomize attributes of enemy and scale with player.level
@@ -232,7 +251,7 @@ function textRender() {
     ctx.lineWidth = 2;
     ctx.textAlign="end";
     ctx.fillStyle = "white";
-    var str1 = 'Level  '
+    var str1 = 'LEVEL  '
     var str2 = player.level.toString();
     var levelString = str1.concat(str2);
     ctx.fillText(levelString, canvas.width-20, canvas.height-30);

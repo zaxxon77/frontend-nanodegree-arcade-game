@@ -25,8 +25,6 @@ var Engine = (function(global) {
         ctx = canvas.getContext('2d'),
         lastTime;
 
-    var paused = false;
-
     canvas.width = 505;
     canvas.height = 606;
     doc.body.appendChild(canvas);
@@ -157,6 +155,10 @@ var Engine = (function(global) {
      * they are just drawing the entire screen over and over.
      */
     function render() {
+        //ctx.setTransform(1, 0, 0, 1, 0, 0);
+        //ctx.translate(-canvas.width/2, -canvas.height/2);
+        //ctx.rotate(1* Math.PI / 180);
+
         /* This array holds the relative URL to the image used
          * for that particular row of the game level.
          */
@@ -198,7 +200,6 @@ var Engine = (function(global) {
 
      // Pay attention to order of rendering to make sure layers appear correct
     function renderEntities() {
- 
         collision.render();
 
         // Loop through all Gem objects
@@ -210,6 +211,13 @@ var Engine = (function(global) {
         if (player.gemsLeft === 0) {
             renderMagicBlock();
         };
+
+        // Star appears at upper levels
+        //if (player.level >= 0) {
+        //    star.x = getRandom(4,0);
+        //    star.y = getRandom(4,0);
+            star.render();
+        //};
 
         /* Loop through all of the objects within the allEnemies array and call
          * the render function you have defined.
@@ -319,7 +327,8 @@ var Engine = (function(global) {
             'images/Gem-Green.png',
             'images/Gem-Blue.png',
             'images/Heart.png',
-            'images/Selector.png'
+            'images/Selector.png',
+            'images/Star.png'
         ]);
         Resources.onReady(init);
     }
