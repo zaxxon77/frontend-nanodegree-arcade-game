@@ -36,7 +36,9 @@ Enemy.prototype.update = function(dt) {
 // bug is travelling in right-to-left direction
 Enemy.prototype.render = function() {
     ctx.save();
-    //ctx.globalAlpha = ;
+    //ctx.globalAlpha = 0.5;
+    //console.log(0.5*Math.sin(frameCnt));
+    if (this.isAThreat === false) {ctx.globalAlpha = 0.5*Math.sin(this.x);}
     if (this.speed < 0) {
         ctx.scale(-1,1); 
         ctx.drawImage(Resources.get(this.sprite), -this.x-101, this.y);
@@ -47,14 +49,15 @@ Enemy.prototype.render = function() {
 
 }
 
-// Restart enemy offscreen and at random row
-Enemy.prototype.restart = function() {
+// Restart enemy offscreen and at random row, reset isAThreat
+Enemy.prototype.reset = function() {
     if (this.speed > 0) {
         this.x = -101;
     } else {
         this.x = 6*101;
     };
     this.y = (getRandom(3,1) * 83) - 20;
+    this.isAThreat = true;
 }
 
 // Player class
@@ -70,6 +73,7 @@ var Player = function(x,y) {
     this.resetOnCollision = false;
     this.resetGame = false;
     this.resetOnLevelUp = false;
+    this.hasStarPower = false;
 }
 
 Player.prototype.update = function() {
@@ -117,16 +121,27 @@ Collision.prototype.render = function() {
     ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
 }
 
+// Render Magic Block for level advance - this is not a class since 
+// it always appears in the same spot
+function renderMagicBlock() {
+    ctx.drawImage(Resources.get('images/Selector.png'), 1 * 101, 5 * 83-40);
+}
+
 // Create Star class
 var Star = function(x,y) {
     this.x = x *101;
-    this.y = y * 83-10;
+    this.y = (y * 83)-10;
     this.sprite = 'images/Star.png';
 }
 
-// Draw the collision on the screen
+// Draw the star on the screen
 Star.prototype.render = function() {
     ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
+}
+
+Star.prototype.reset = function() {
+    this.x = getRandom(4,0) * 101;
+    this.y = (getRandom(4,1) * 83)-10;
 }
 
 // Create Gem class
@@ -176,7 +191,7 @@ function getRandom(upperlimit,lowerlimit) {
 var player = new Player(2,5);
 var collision = new Collision(-10,-10);
 var allGemColors = ['Orange', 'Green', 'Blue'];
-var star = new Star(getRandom(4,0),getRandom(4,0));
+var star = new Star(getRandom(4,0),getRandom(4,1));
 var gem1 = new Gem(getRandom(4,0),getRandom(4,1),allGemColors[getRandom(2,0)]);
 var gem2 = new Gem(getRandom(4,0),getRandom(4,1),allGemColors[getRandom(2,0)]);
 var allGems = [gem1, gem2]; 

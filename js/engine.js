@@ -14,6 +14,9 @@
  * a little simpler to work with.
  */
 
+ // Note: engine.js accesses classes and functions defined in app.js, and is the
+ // main gameplay driver through the reset() subroutine
+
 var Engine = (function(global) {
     /* Predefine the variables we'll be using within this scope,
      * create the canvas element, grab the 2D context for that canvas
@@ -23,7 +26,8 @@ var Engine = (function(global) {
         win = global.window,
         canvas = doc.createElement('canvas'),
         ctx = canvas.getContext('2d'),
-        lastTime;
+        lastTime,
+        frameCnt;
 
     canvas.width = 505;
     canvas.height = 606;
@@ -66,7 +70,7 @@ var Engine = (function(global) {
      * game loop.
      */
     function init() {
-        reset(); // initialize and set up gameplay
+        reset(); // initialize and set up gameplay, reset as needed
         lastTime = Date.now();
         main();
     }
@@ -85,15 +89,18 @@ var Engine = (function(global) {
         // Don't update if game paused 
         if (!player.paused && player.lives>0 ) {updateEntities(dt);};
 
-        // Check for collisions between player and enemies
-        checkCollisions();
+        // Check for collisions between player, enemies, gems, and other objects
+        if (player.hasStarPower === false) {checkCollisions();};
         checkGemCollect();
+        checkStarCollect();
 
         if (player.gemsLeft === 0) {checkBackToBlock()};
 
         if (player.resetGame) {reset();};
     }
 
+
+    // ------  These functions call reset(), so need to be included in engine.js -----
     // This function is called by update() to see if the player has collided
     // with any enemies.
     // Note: player size may be variable, find an appropriate collision area
@@ -127,12 +134,25 @@ var Engine = (function(global) {
         });
     }
 
+    // This function checks to see if player has made it back to Level-up block
     function checkBackToBlock() {
         if (player.x === (1*101) && player.y === (5*83-13)) {
             player.resetOnLevelUp = true;
             reset();
         };
     }
+
+     // This function checks to see if player picks up Star.  If so, all enemies
+     // are not a threat for a few seconds.
+    function checkStarCollect() {
+        if (player.x === star.x && player.y === star.y-3) {
+            allEnemies.forEach(function(enemy) {
+                enemy.isAThreat = false;
+            });
+            player.hasStarPower = true;
+        };
+    }
+   
 
     /* This is called by the update function  and loops through all of the
      * objects within your allEnemies array as defined in app.js and calls
@@ -213,11 +233,11 @@ var Engine = (function(global) {
         };
 
         // Star appears at upper levels
-        //if (player.level >= 0) {
-        //    star.x = getRandom(4,0);
-        //    star.y = getRandom(4,0);
-            star.render();
-        //};
+        if (player.level >= 0) {
+           if (player.hasStarPower === false) {
+                star.render();
+            };
+        };
 
         /* Loop through all of the objects within the allEnemies array and call
          * the render function you have defined.
@@ -233,7 +253,6 @@ var Engine = (function(global) {
 
     // Render Magic Block for level advance
     function renderMagicBlock() {
-    //     ctx.drawImage(Resources.get('images/Selector.png'), getRandom(4,0) * 101, getRandom(5,0) * 83-40);
         ctx.drawImage(Resources.get('images/Selector.png'), 1 * 101, 5 * 83-40);
     }
 
@@ -265,14 +284,10 @@ var Engine = (function(global) {
             player.lives = 3;
             player.gemsLeft = 2;
             player.level = 0;
+            player.hasStarPower = false;
 
             allEnemies = [];
             allEnemies = createNewEnemy(allEnemies);
-            // reset enemies
-            // allEnemies.forEach(function(enemy) {
-            //     enemy.x = 0;
-            //     enemy.y = (Math.floor((Math.random() * 3) + 1) * 83) - 20;
-            // });
 
             // reset collisions, move collision off the screen
             collision.x = -1000;
@@ -291,6 +306,8 @@ var Engine = (function(global) {
             player.resetOnLevelUp = false;
             player.level++;
             player.gemsLeft = 2;
+            player.hasStarPower = false;
+
 
             // reset collisions, move collision off the screen
             collision.x = -1000;
@@ -298,12 +315,14 @@ var Engine = (function(global) {
 
             allGems.forEach(function(gem) {
                 gem.reset();
-            }); 
+            });
+
+            star.reset();
 
             allEnemies = createNewEnemy(allEnemies);
 
             allEnemies.forEach(function(enemy) {
-                enemy.restart();
+                enemy.reset();
             });
 
             init();
@@ -339,4 +358,5 @@ var Engine = (function(global) {
      */
     global.ctx = ctx;
     global.canvas = canvas;
+    global.frameCnt = frameCnt++;
 })(this);
