@@ -120,6 +120,12 @@ var Collision = function(x,y) {
 Collision.prototype.render = function() {
     ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
 }
+            
+// Reset collisions, move collision off the screen
+Collision.prototype.reset = function() {
+    this.x = -1000;
+    this.y = -1000;
+}
 
 // Render Magic Block for level advance - this is not a class since 
 // it always appears in the same spot

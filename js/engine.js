@@ -289,9 +289,7 @@ var Engine = (function(global) {
             allEnemies = [];
             allEnemies = createNewEnemy(allEnemies);
 
-            // reset collisions, move collision off the screen
-            collision.x = -1000;
-            collision.y = -1000;
+            collision.reset();
             
             allGems.forEach(function(gem) {
                 gem.reset();
@@ -308,10 +306,7 @@ var Engine = (function(global) {
             player.gemsLeft = 2;
             player.hasStarPower = false;
 
-
-            // reset collisions, move collision off the screen
-            collision.x = -1000;
-            collision.y = -1000;
+            collision.reset();
 
             allGems.forEach(function(gem) {
                 gem.reset();
