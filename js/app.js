@@ -74,6 +74,7 @@ var Player = function(x,y) {
     this.resetGame = false;
     this.resetOnLevelUp = false;
     this.hasStarPower = false;
+    this.highScore = 0;
 }
 
 Player.prototype.update = function() {
@@ -160,6 +161,7 @@ var Gem = function(x,y,color) {
     this.sprite =  str1.concat(this.color,str3);
     // set value of gem based on color
     this.worth = getGemValue(this);
+    this.cnt = 0;
 }
 
 // Functinalize gem values to set appropriate value when random color is drawn
@@ -171,9 +173,13 @@ function getGemValue(gem) {
     return gem.worth;
 }
 
-// Draw the gem on the screen
+// Draw the gem on the screen - remove gem fade 
 Gem.prototype.render = function() {
+//    ctx.save();
+//    this.cnt++
+//    ctx.globalAlpha = Math.cos(this.cnt/30);
     ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
+//    ctx.restore();
 }
 
 // consider creating reset prototype for each class
@@ -193,7 +199,7 @@ function getRandom(upperlimit,lowerlimit) {
 }
 
 
-//  Instantiate objects
+//  Instantiate objects --------------------------------------------------------
 var player = new Player(2,5);
 var collision = new Collision(-10,-10);
 var allGemColors = ['Orange', 'Green', 'Blue'];
@@ -213,6 +219,7 @@ function createNewEnemy(allEnemies) {
     console.log(speedScale);
     speedScale = Math.min(speedScale, 2.5); // upper limit to speed
     var direction = Math.round(Math.random());
+    // probaby some more concise logic for this, but hey it works 
     if (direction === 0) {
         direction = -1;
         var startSquare = 5;
@@ -220,7 +227,7 @@ function createNewEnemy(allEnemies) {
         var startSquare = -1;
     };
 
-    // instantiate new enemy and concatinate to array
+    // instantiate new enemy and concatenate to array
     var newEnemy = new Enemy(startSquare,getRandom(3,1),direction*speedScale);
     allEnemies = allEnemies.concat(newEnemy);
 
@@ -280,17 +287,26 @@ function textRender() {
     ctx.strokeText(levelString, canvas.width-20, canvas.height-30);
 
 
-    // Display Score
+    // Display Player Score
     ctx.font = "24pt Impact";
     ctx.lineWidth = 2;
     ctx.textAlign="end";
     ctx.fillStyle = "white";
-    var str1 = 'SCORE  '
+    var str1 = 'SCORE  ';
     var str2 = player.score.toString();
     var scoreString = str1.concat(str2);
     ctx.fillText(scoreString, canvas.width-20, 80);
     ctx.strokeStyle = "black";
     ctx.strokeText(scoreString, canvas.width-20, 80);
+
+    // Display Highscore
+    ctx.textAlign="start";
+    var str3 = 'HIGHSCORE  ';
+    var str4 = player.highScore.toString();
+    var scoreString = str3.concat(str4);
+    ctx.fillText(scoreString, 20, 80);
+    ctx.strokeStyle = "black";
+    ctx.strokeText(scoreString, 20, 80);
 
     // Display Game Over
     if (player.lives === 0) {
@@ -305,5 +321,14 @@ function textRender() {
         ctx.fillText('- REPLAY? (r) -', canvas.width/2, (canvas.height/2 + 50));
         ctx.strokeStyle = "black";
         ctx.strokeText('- REPLAY? (r) -', canvas.width/2, (canvas.height/2 + 50));
+
+        // DIsplay New Highscore if achieved
+        if (player.score >= player.highScore) {
+            ctx.fillStyle = "white";
+            ctx.fillText('NEW HIGHSCORE!!!', canvas.width/2, (canvas.height/2 - 70));
+            ctx.strokeStyle = "black";
+            ctx.strokeText('NEW HIGHSCORE!!!', canvas.width/2, (canvas.height/2 - 70));           
+        };
+
     };
 }

@@ -91,8 +91,10 @@ var Engine = (function(global) {
 
         // Check for collisions between player, enemies, gems, and other objects
         if (player.hasStarPower === false) {checkCollisions();};
+        
         checkGemCollect();
-        checkStarCollect();
+        
+        if (player.level >= 6) {checkStarCollect();};
 
         if (player.gemsLeft === 0) {checkBackToBlock()};
 
@@ -233,7 +235,7 @@ var Engine = (function(global) {
         };
 
         // Star appears at upper levels
-        if (player.level >= 0) {
+        if (player.level >= 6) {
            if (player.hasStarPower === false) {
                 star.render();
             };
@@ -278,13 +280,14 @@ var Engine = (function(global) {
 
         // Reset overall game upon player request after all lives lost
         if (player.resetGame === true) {
-            player.score = 0;
             player.paused = false;
             player.resetGame = false;
             player.lives = 3;
             player.gemsLeft = 2;
             player.level = 0;
             player.hasStarPower = false;
+            if (player.score >= player.highScore) {player.highScore = player.score;};
+            player.score = 0;
 
             allEnemies = [];
             allEnemies = createNewEnemy(allEnemies);
@@ -311,6 +314,11 @@ var Engine = (function(global) {
             allGems.forEach(function(gem) {
                 gem.reset();
             });
+
+            // Sort gems by row so they render properly
+            allGems.sort(function(a,b){
+                return a.y - b.y;
+            })
 
             star.reset();
 
