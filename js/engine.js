@@ -29,6 +29,9 @@ var Engine = (function(global) {
         lastTime,
         frameCnt;
 
+    // Manage one aspect of game difficulty with this variable
+    var starRenderLevel = 0;
+
     canvas.width = 505;
     canvas.height = 606;
     doc.body.appendChild(canvas);
@@ -90,13 +93,17 @@ var Engine = (function(global) {
         if (!player.paused && player.lives>0 ) {updateEntities(dt);};
 
         // Check for collisions between player, enemies, gems, and other objects
-        if (player.hasStarPower === false) {checkCollisions();};
+        if (!player.hasStarPower) {checkCollisions();};
         
         checkGemCollect();
         
-        if (player.level >= 6) {checkStarCollect();};
+        if (player.level >= starRenderLevel) {checkStarCollect();};
 
-        if (player.gemsLeft === 0) {checkBackToBlock()};
+        // try to start/stop invincible sound here as well as at paused keyboard input
+        if (player.hasStarPower && player.paused) {player.invincibleSound.pause();};
+        if (player.hasStarPower && !player.paused) {player.invincibleSound.play();};
+
+        if (player.gemsLeft === 0) {checkBackToBlock();};
 
         if (player.resetGame) {reset();};
     }
@@ -110,6 +117,9 @@ var Engine = (function(global) {
         allEnemies.forEach(function(enemy) {
             if (enemy.y === player.y-7 
                 && (enemy.x >= player.x-70 && enemy.x <= player.x+70)) {
+                
+                player.splat.play(); // Play splat sound
+
                 // set collision location
                 collision.x = player.x-50;
                 collision.y = player.y-20;
@@ -126,6 +136,10 @@ var Engine = (function(global) {
         allGems.forEach(function(gem) {
             if (gem.y === player.y-17 
                 && (gem.x >= player.x-70 && gem.x <= player.x+70)) {
+                
+                if (player.gemsLeft === 2) {player.gemSound1.play();};
+                if (player.gemsLeft === 1) {player.gemSound2.play();};
+
                 // move gem off screen
                 gem.x = -1000;
                 gem.y = -1000;
@@ -139,6 +153,7 @@ var Engine = (function(global) {
     // This function checks to see if player has made it back to Level-up block
     function checkBackToBlock() {
         if (player.x === (1*101) && player.y === (5*83-13)) {
+            player.levelUp.play(); // Play Level Up sound
             player.resetOnLevelUp = true;
             reset();
         };
@@ -152,6 +167,7 @@ var Engine = (function(global) {
                 enemy.isAThreat = false;
             });
             player.hasStarPower = true;
+            player.invincibleSound.play();
         };
     }
    
@@ -185,7 +201,7 @@ var Engine = (function(global) {
          * for that particular row of the game level.
          */
         var rowImages = [
-                'images/water-block.png',   // Top row is water
+                'images/grass-block.png',   // Top row is water
                 'images/stone-block.png',   // Row 1 of 3 of stone
                 'images/stone-block.png',   // Row 2 of 3 of stone
                 'images/stone-block.png',   // Row 3 of 3 of stone
@@ -235,7 +251,7 @@ var Engine = (function(global) {
         };
 
         // Star appears at upper levels
-        if (player.level >= 6) {
+        if (player.level >= starRenderLevel) {
            if (player.hasStarPower === false) {
                 star.render();
             };
@@ -288,6 +304,7 @@ var Engine = (function(global) {
             player.hasStarPower = false;
             if (player.score >= player.highScore) {player.highScore = player.score;};
             player.score = 0;
+            player.highScoreSoundPlayed = false;
 
             allEnemies = [];
             allEnemies = createNewEnemy(allEnemies);
@@ -308,6 +325,7 @@ var Engine = (function(global) {
             player.level++;
             player.gemsLeft = 2;
             player.hasStarPower = false;
+            player.invincibleSound.pause()
 
             collision.reset();
 

@@ -75,6 +75,22 @@ var Player = function(x,y) {
     this.resetOnLevelUp = false;
     this.hasStarPower = false;
     this.highScore = 0;
+    this.highScoreSoundPlayed = false;
+
+    // Preload audio samples
+    this.jump = new Audio('sounds/jump_short.wav'); //http://soundbible.com/1601-Mario-Jumping.html http://mp3cut.net/
+    this.jump1 = new Audio('sounds/jump_short1.wav'); //http://soundbible.com/1601-Mario-Jumping.html
+    this.jump2 = new Audio('sounds/jump_short2.wav'); //http://soundbible.com/1601-Mario-Jumping.html
+    this.jump3 = new Audio('sounds/jump_short3.wav'); //http://soundbible.com/1601-Mario-Jumping.html
+    this.jumpArray = [this.jump,this.jump1,this.jump2,this.jump3];//this.splat = new Audio('audio/splat.wav');
+    this.splat = new Audio('sounds/splat.wav'); //http://soundbible.com/1733-Spit-Splat.html
+    this.levelUp = new Audio('sounds/levelUp.wav'); //http://soundbible.com/1636-Power-Up-Ray.html
+    this.pauseSound = new Audio('sounds/smb_pause.wav'); //http://themushroomkingdom.net/sounds/wav/smb/smb_pause.wav
+    this.wallBump = new Audio('sounds/wallBump.wav'); //http://themushroomkingdom.net/sounds/wav/smb/smb_bump.wav
+    this.highScoreSound = new Audio('sounds/high_score.wav') //http://themushroomkingdom.net/sounds/wav/sm64/sm64_high_score.wav
+    this.gemSound1 = new Audio('sounds/coin1.wav') //http://opengameart.org/content/10-8bit-coin-sounds
+    this.gemSound2 = new Audio('sounds/coin3.wav') //http://opengameart.org/content/10-8bit-coin-sounds
+    this.invincibleSound = new Audio('sounds/invincible.wav') //http://www.digitpress.com/dpsoundz/crystalcastles.wav
 }
 
 Player.prototype.update = function() {
@@ -92,15 +108,33 @@ Player.prototype.update = function() {
         };
 
         // Check for pause input and handle
-        if (keyCode === 'p' && !this.paused) {this.paused = true; return;};
-        if (keyCode === 'p' && this.paused) {this.paused = false; return;};
+        if (keyCode === 'p' && !this.paused) {
+            this.paused = true; 
+            this.pauseSound.play();
+            if (player.hasStarPower) {player.invincibleSound.pause();};
+            return;
+        };
+        if (keyCode === 'p' && this.paused) {
+            this.paused = false; 
+            this.pauseSound.play();
+            if (player.hasStarPower) {player.invincibleSound.play();};
+            return;
+        };
 
         // Change player position based on keyboard, limit movement to board dimensions
         if (!this.paused) {
-            if (keyCode === 'left' && this.x>1) {this.x = this.x - 101;};
-            if (keyCode === 'up' && this.y>1) {this.y = this.y - 83;};
-            if (keyCode === 'right' && this.x<(4*101)) {this.x = this.x + 101;};
-            if (keyCode === 'down' && this.y<(5*83-13)) {this.y = this.y + 83;};           
+            // Play wall bump sound if player trying to be moved off board
+            // Needs to be checked before actually moved to square
+            if (keyCode === 'left' && this.x===0) {this.wallBump.play();};  
+            if (keyCode === 'up' && this.y===-13) {this.wallBump.play();};  
+            if (keyCode === 'right' && this.x===(4*101)) {this.wallBump.play();};  
+            if (keyCode === 'down' && this.y===(5*83-13)) {this.wallBump.play();};           
+
+            this.jumpArray[1, 2, 3, 0] =  this.jumpArray[0, 1, 2, 3];
+            if (keyCode === 'left' && this.x>1) {this.x = this.x - 101;this.jumpArray[0].play();};
+            if (keyCode === 'up' && this.y>1) {this.y = this.y - 83;this.jumpArray[0].play();};
+            if (keyCode === 'right' && this.x<(4*101)) {this.x = this.x + 101;this.jumpArray[0].play();};
+            if (keyCode === 'down' && this.y<(5*83-13)) {this.y = this.y + 83;this.jumpArray[0].play();};           
         };
     };
 }
@@ -251,6 +285,8 @@ document.addEventListener('keyup', function(e) {
     player.handleInput(allowedKeys[e.keyCode]);
 });
 
+// Text render function writes text to screen, no doubt
+// Consider creating subfuctions in text rendering
 function textRender() {
     if (player.paused && player.lives > 0) {
         ctx.font = "36pt Impact";
@@ -327,8 +363,16 @@ function textRender() {
             ctx.fillStyle = "white";
             ctx.fillText('NEW HIGHSCORE!!!', canvas.width/2, (canvas.height/2 - 70));
             ctx.strokeStyle = "black";
-            ctx.strokeText('NEW HIGHSCORE!!!', canvas.width/2, (canvas.height/2 - 70));           
+            ctx.strokeText('NEW HIGHSCORE!!!', canvas.width/2, (canvas.height/2 - 70));
+            if (player.highScoreSoundPlayed === false) {
+                player.highScoreSound.play();        
+                player.highScoreSoundPlayed = true;
+            };
         };
 
     };
 }
+
+
+
+
