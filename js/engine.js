@@ -30,7 +30,7 @@ var Engine = (function(global) {
         frameCnt;
 
     // Manage one aspect of game difficulty with this variable
-    var starRenderLevel = 0;
+    var starRenderLevel = 4;
 
     canvas.width = 505;
     canvas.height = 606;
@@ -137,8 +137,11 @@ var Engine = (function(global) {
             if (gem.y === player.y-17 
                 && (gem.x >= player.x-70 && gem.x <= player.x+70)) {
                 
-                if (player.gemsLeft === 2) {player.gemSound1.play();};
-                if (player.gemsLeft === 1) {player.gemSound2.play();};
+                // cycle through gem sounds like the latest jingle on the radio
+                if (player.gemSoundCnt > 9) {player.gemSoundCnt = 0}
+                player.gemSound[player.gemSoundCnt].play();
+                player.gemSoundCnt++;
+
 
                 // move gem off screen
                 gem.x = -1000;
@@ -146,6 +149,7 @@ var Engine = (function(global) {
 
                 player.score = player.score + gem.worth;
                 player.gemsLeft--;
+                console.log(player.gemSoundArrayCnt);
             };
         });
     }

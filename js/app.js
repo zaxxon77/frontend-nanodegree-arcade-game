@@ -34,10 +34,9 @@ Enemy.prototype.update = function(dt) {
 
 // Draw the enemy on the screen, flip and translate image if
 // bug is travelling in right-to-left direction
+// Also, render with a flicker if star is collected
 Enemy.prototype.render = function() {
     ctx.save();
-    //ctx.globalAlpha = 0.5;
-    //console.log(0.5*Math.sin(frameCnt));
     if (this.isAThreat === false) {ctx.globalAlpha = 0.5*Math.sin(this.x);}
     if (this.speed < 0) {
         ctx.scale(-1,1); 
@@ -60,7 +59,8 @@ Enemy.prototype.reset = function() {
     this.isAThreat = true;
 }
 
-// Player class
+// Player class - most game objects are defined through player instantiation, since
+// there's only 1 player in the game
 var Player = function(x,y) {
     this.x = x * 101;
     this.y = (y * 83) - 13;
@@ -88,8 +88,12 @@ var Player = function(x,y) {
     this.pauseSound = new Audio('sounds/smb_pause.wav'); //http://themushroomkingdom.net/sounds/wav/smb/smb_pause.wav
     this.wallBump = new Audio('sounds/wallBump.wav'); //http://themushroomkingdom.net/sounds/wav/smb/smb_bump.wav
     this.highScoreSound = new Audio('sounds/high_score.wav') //http://themushroomkingdom.net/sounds/wav/sm64/sm64_high_score.wav
-    this.gemSound1 = new Audio('sounds/coin1.wav') //http://opengameart.org/content/10-8bit-coin-sounds
-    this.gemSound2 = new Audio('sounds/coin3.wav') //http://opengameart.org/content/10-8bit-coin-sounds
+    this.gemSound = [];
+    this.gemSoundCnt = 0;
+    for (var i = 1; i <= 10; i++) {
+        var strCoin = 'sounds/coin';
+        this.gemSound[i-1] = new Audio(strCoin.concat(i,'.wav'));
+    };
     this.invincibleSound = new Audio('sounds/invincible.wav') //http://www.digitpress.com/dpsoundz/crystalcastles.wav
 }
 
