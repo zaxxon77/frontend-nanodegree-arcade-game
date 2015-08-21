@@ -12,3 +12,6 @@ See how high of a score you can get, and how many levels you can advance to!
 Good Luck!
 
 Oh yeah hit 'p' for pause.
+
+
+Game is located at //http... github, download the files & folder, and point your browser to the index.html file
