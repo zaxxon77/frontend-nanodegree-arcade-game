@@ -66,7 +66,7 @@ var Engine = (function(global) {
          * function again as soon as the browser is able to draw another frame.
          */
         win.requestAnimationFrame(main);
-    };
+    }
 
     /* This function does some initial setup that should only occur once,
      * particularly setting the lastTime variable that is required for the
@@ -90,22 +90,22 @@ var Engine = (function(global) {
     function update(dt) {
         
         // Don't update if game paused 
-        if (!player.paused && player.lives>0 ) {updateEntities(dt);};
+        if (!player.paused && player.lives>0 ) {updateEntities(dt);}
 
         // Check for collisions between player, enemies, gems, and other objects
-        if (!player.hasStarPower) {checkCollisions();};
+        if (!player.hasStarPower) {checkCollisions();}
         
         checkGemCollect();
         
-        if (player.level >= STARRENDERLEVEL) {checkStarCollect();};
+        if (player.level >= STARRENDERLEVEL) {checkStarCollect();}
 
         // try to start/stop invincible sound here as well as at paused keyboard input
-        if (player.hasStarPower && player.paused) {player.invincibleSound.pause();};
-        if (player.hasStarPower && !player.paused) {player.invincibleSound.play();};
+        if (player.hasStarPower && player.paused) {player.invincibleSound.pause();}
+        if (player.hasStarPower && !player.paused) {player.invincibleSound.play();}
 
-        if (player.gemsLeft === 0) {checkBackToBlock();};
+        if (player.gemsLeft === 0) {checkBackToBlock();}
 
-        if (player.resetGame) {reset();};
+        if (player.resetGame) {reset();}
     }
 
 
@@ -125,9 +125,9 @@ var Engine = (function(global) {
                 collision.y = player.y-20;
 
                 player.lives = player.lives - 1;
-                player.resetOnCollision = true
+                player.resetOnCollision = true;
                 reset();
-            };
+            }
         });
     }
 
@@ -138,7 +138,7 @@ var Engine = (function(global) {
                 && (gem.x >= player.x-70 && gem.x <= player.x+70)) {
                 
                 // cycle through gem sounds like the latest jingle on the radio
-                if (player.gemSoundCnt > 9) {player.gemSoundCnt = 0}
+                if (player.gemSoundCnt > 9) {player.gemSoundCnt = 0;}
                 player.gemSound[player.gemSoundCnt].play();
                 player.gemSoundCnt++;
 
@@ -149,7 +149,7 @@ var Engine = (function(global) {
                 player.score = player.score + gem.worth;
                 player.gemsLeft--;
                 console.log(player.gemSoundArrayCnt);
-            };
+            }
         });
     }
 
@@ -159,7 +159,7 @@ var Engine = (function(global) {
             player.levelUp.play(); // Play Level Up sound
             player.resetOnLevelUp = true;
             reset();
-        };
+        }
     }
 
      // This function checks to see if player picks up Star.  If so, all enemies
@@ -171,7 +171,7 @@ var Engine = (function(global) {
             });
             player.hasStarPower = true;
             player.invincibleSound.play();
-        };
+        }
     }
    
 
@@ -251,14 +251,14 @@ var Engine = (function(global) {
         // Magic block appears once all gems are collected
         if (player.gemsLeft === 0) {
             renderMagicBlock();
-        };
+        }
 
         // Star appears at upper levels
         if (player.level >= STARRENDERLEVEL) {
            if (player.hasStarPower === false) {
                 star.render();
-            };
-        };
+            }
+        }
 
         /* Loop through all of the objects within the allEnemies array and call
          * the render function you have defined.
@@ -283,7 +283,7 @@ var Engine = (function(global) {
         if (player.level === 0) {
             allEnemies = [];
             allEnemies = createNewEnemy(allEnemies);
-        };
+        }
 
         // reset player position to bottom middle of screen
         // player.resetOnCollision
@@ -291,8 +291,8 @@ var Engine = (function(global) {
         player.y = 5 * 83 - 13;
 
         if (player.resetOnCollision === true) {
-            player.resetOnCollision = false
-        };
+            player.resetOnCollision = false;
+        }
 
         // Reset overall game upon player request after all lives lost
         if (player.resetGame === true) {
@@ -302,7 +302,7 @@ var Engine = (function(global) {
             player.gemsLeft = 2;
             player.level = 0;
             player.hasStarPower = false;
-            if (player.score >= player.highScore) {player.highScore = player.score;};
+            if (player.score >= player.highScore) {player.highScore = player.score;}
             player.score = 0;
             player.highScoreSoundPlayed = false;
             player.gemSoundCnt = 0;
@@ -317,7 +317,7 @@ var Engine = (function(global) {
             }); 
 
             init();
-        };
+        }
 
         // Advance level if gems are collected 
         if (player.resetOnLevelUp === true) {
@@ -325,7 +325,7 @@ var Engine = (function(global) {
             player.level++;
             player.gemsLeft = 2;
             player.hasStarPower = false;
-            player.invincibleSound.pause()
+            player.invincibleSound.pause();
 
             collision.reset();
 
@@ -336,7 +336,7 @@ var Engine = (function(global) {
             // Sort gems by row so they render properly
             allGems.sort(function(a,b){
                 return a.y - b.y;
-            })
+            });
 
             star.reset();
 
