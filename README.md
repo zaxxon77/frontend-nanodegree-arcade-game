@@ -14,4 +14,6 @@ Good Luck!
 Oh yeah hit 'p' for pause.
 
 
-Game is located at //http... github, download the files & folder, and point your browser to the index.html file
+Game is located at https://github.com/zaxxon77/frontend-nanodegree-arcade-game, 
+download the files & folder, and point your browser to the index.html file to get
+up and running.

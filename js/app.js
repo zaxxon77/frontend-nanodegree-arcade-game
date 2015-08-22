@@ -1,64 +1,3 @@
-// Enemies our player must avoid
-var Enemy = function(x,y,speed) {
-    // Variables applied to each of our instances go here,
-    // we've provided one for you to get started
-    this.x = x * 101;
-    this.y = (y * 83) - 20;
-    this.speed = speed * 100;
-    this.sprite = 'images/enemy-bug.png';
-    this.isAThreat = true;
-}
-
-// Update the enemy's position, required method for game
-// Parameter: dt, a time delta between ticks
-Enemy.prototype.update = function(dt) {
-    // You should multiply any movement by the dt parameter
-    // which will ensure the game runs at the same speed for
-    // all computers.
-    this.x = this.x+(this.speed*dt);
-
-    // check to see if enemy has travelled off screen and 
-    // handle appropriately (try different methods)
-    // 1. overflow to next stone line
-    // 2. reset on same line
-    // 3. randomize which line it shows up on next << this one!
-    if (this.x>5*101 && this.speed>0) {
-        this.x = -101;
-        this.y = (getRandom(3,1) * 83) - 20;
-    };
-    if (this.x<-101 && this.speed<0) {
-        this.x = 6*101;
-        this.y = (getRandom(3,1) * 83) - 20;
-    };
-}
-
-// Draw the enemy on the screen, flip and translate image if
-// bug is travelling in right-to-left direction
-// Also, render with a flicker if star is collected
-Enemy.prototype.render = function() {
-    ctx.save();
-    if (this.isAThreat === false) {ctx.globalAlpha = 0.5*Math.sin(this.x);}
-    if (this.speed < 0) {
-        ctx.scale(-1,1); 
-        ctx.drawImage(Resources.get(this.sprite), -this.x-101, this.y);
-    } else {
-    ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
-    };
-    ctx.restore();
-
-}
-
-// Restart enemy offscreen and at random row, reset isAThreat
-Enemy.prototype.reset = function() {
-    if (this.speed > 0) {
-        this.x = -101;
-    } else {
-        this.x = 6*101;
-    };
-    this.y = (getRandom(3,1) * 83) - 20;
-    this.isAThreat = true;
-}
-
 // Player class - most game objects are defined through player instantiation, since
 // there's only 1 player in the game
 var Player = function(x,y) {
@@ -87,13 +26,13 @@ var Player = function(x,y) {
     this.levelUp = new Audio('sounds/levelUp.wav'); //http://soundbible.com/1636-Power-Up-Ray.html
     this.pauseSound = new Audio('sounds/smb_pause.wav'); //http://themushroomkingdom.net/sounds/wav/smb/smb_pause.wav
     this.wallBump = new Audio('sounds/wallBump.wav'); //http://themushroomkingdom.net/sounds/wav/smb/smb_bump.wav
-    this.highScoreSound = new Audio('sounds/high_score.wav') //http://themushroomkingdom.net/sounds/wav/sm64/sm64_high_score.wav
+    this.highScoreSound = new Audio('sounds/high_score.wav'); //http://themushroomkingdom.net/sounds/wav/sm64/sm64_high_score.wav
     this.gemSound = [];
     this.gemSoundCnt = 0;
     for (var i = 1; i <= 10; i++) {
         var strCoin = 'sounds/coin';
-        this.gemSound[i-1] = new Audio(strCoin.concat(i,'.wav'));
-    };
+        this.gemSound[i-1] = new Audio(strCoin.concat(i,'.wav')); //
+    }
     this.invincibleSound = new Audio('sounds/invincible.wav') //http://www.digitpress.com/dpsoundz/crystalcastles.wav
 }
 
@@ -107,39 +46,39 @@ Player.prototype.update = function() {
             this.paused = true;
             if (keyCode === 'r') {
                 this.resetGame = true;
-            };
+            }
             return;
-        };
+        }
 
         // Check for pause input and handle
         if (keyCode === 'p' && !this.paused) {
             this.paused = true; 
             this.pauseSound.play();
-            if (player.hasStarPower) {player.invincibleSound.pause();};
+            if (player.hasStarPower) {player.invincibleSound.pause()};
             return;
-        };
+        }
         if (keyCode === 'p' && this.paused) {
             this.paused = false; 
             this.pauseSound.play();
-            if (player.hasStarPower) {player.invincibleSound.play();};
+            if (player.hasStarPower) {player.invincibleSound.play()};
             return;
-        };
+        }
 
         // Change player position based on keyboard, limit movement to board dimensions
         if (!this.paused) {
             // Play wall bump sound if player trying to be moved off board
             // Needs to be checked before actually moved to square
-            if (keyCode === 'left' && this.x===0) {this.wallBump.play();};  
-            if (keyCode === 'up' && this.y===-13) {this.wallBump.play();};  
-            if (keyCode === 'right' && this.x===(4*101)) {this.wallBump.play();};  
-            if (keyCode === 'down' && this.y===(5*83-13)) {this.wallBump.play();};           
+            if (keyCode === 'left' && this.x===0) {this.wallBump.play()};  
+            if (keyCode === 'up' && this.y===-13) {this.wallBump.play()};  
+            if (keyCode === 'right' && this.x===(4*101)) {this.wallBump.play()};  
+            if (keyCode === 'down' && this.y===(5*83-13)) {this.wallBump.play()};           
 
             this.jumpArray[1, 2, 3, 0] =  this.jumpArray[0, 1, 2, 3];
-            if (keyCode === 'left' && this.x>1) {this.x = this.x - 101;this.jumpArray[0].play();};
-            if (keyCode === 'up' && this.y>1) {this.y = this.y - 83;this.jumpArray[0].play();};
-            if (keyCode === 'right' && this.x<(4*101)) {this.x = this.x + 101;this.jumpArray[0].play();};
-            if (keyCode === 'down' && this.y<(5*83-13)) {this.y = this.y + 83;this.jumpArray[0].play();};           
-        };
+            if (keyCode === 'left' && this.x>1) {this.x = this.x - 101;this.jumpArray[0].play()};
+            if (keyCode === 'up' && this.y>1) {this.y = this.y - 83;this.jumpArray[0].play()};
+            if (keyCode === 'right' && this.x<(4*101)) {this.x = this.x + 101;this.jumpArray[0].play()};
+            if (keyCode === 'down' && this.y<(5*83-13)) {this.y = this.y + 83;this.jumpArray[0].play()};           
+        }
     };
 }
 
@@ -148,7 +87,67 @@ Player.prototype.render = function() {
     ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
 }
 
-// Create Collision class
+// Enemies our player must avoid
+var Enemy = function(x,y,speed) {
+    // Variables applied to each of our instances go here
+    this.x = x * 101;
+    this.y = (y * 83) - 20;
+    this.speed = speed * 100;
+    this.sprite = 'images/enemy-bug.png';
+    this.isAThreat = true;
+}
+
+// Update the enemy's position, required method for game
+// Parameter: dt, a time delta between ticks
+Enemy.prototype.update = function(dt) {
+    // You should multiply any movement by the dt parameter
+    // which will ensure the game runs at the same speed for
+    // all computers. Introduce speed variable.
+    this.x = this.x+(this.speed*dt);
+
+    // check to see if enemy has travelled off screen and 
+    // handle appropriately (try different methods)
+    // 1. overflow to next stone line
+    // 2. reset on same line
+    // 3. randomize which line it shows up on next << this one!
+    if (this.x>5*101 && this.speed>0) {
+        this.x = -101;
+        this.y = (getRandom(3,1) * 83) - 20;
+    }
+    if (this.x<-101 && this.speed<0) {
+        this.x = 6*101;
+        this.y = (getRandom(3,1) * 83) - 20;
+    }
+}
+
+// Draw the enemy on the screen, flip and translate image if
+// bug is travelling in right-to-left direction
+// Also, render with a flicker if star is collected
+Enemy.prototype.render = function() {
+    ctx.save();
+    if (this.isAThreat === false) {ctx.globalAlpha = 0.5*Math.sin(this.x)}
+    if (this.speed < 0) {
+        ctx.scale(-1,1); 
+        ctx.drawImage(Resources.get(this.sprite), -this.x-101, this.y);
+    } else {
+    ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
+    }
+    ctx.restore();
+
+}
+
+// Restart enemy offscreen and at random row, reset isAThreat
+Enemy.prototype.reset = function() {
+    if (this.speed > 0) {
+        this.x = -101;
+    } else {
+        this.x = 6*101;
+    }
+    this.y = (getRandom(3,1) * 83) - 20;
+    this.isAThreat = true;
+}
+
+// Create Collision class for running into enemies & drawing splat image
 var Collision = function(x,y) {
     this.x = x *101;
     this.y = y * 83;
@@ -167,7 +166,7 @@ Collision.prototype.reset = function() {
 }
 
 // Render Magic Block for level advance - this is not a class since 
-// it always appears in the same spot
+// it always appears in the same spot and there's only 1 occurance
 function renderMagicBlock() {
     ctx.drawImage(Resources.get('images/Selector.png'), 1 * 101, 5 * 83-40);
 }
@@ -220,6 +219,7 @@ Gem.prototype.render = function() {
 //    ctx.restore();
 }
 
+// Reset gems on screen and assign appropriate value based on color
 // consider creating reset prototype for each class
 Gem.prototype.reset = function() {
     this.x = getRandom(4,0) * 101;
@@ -371,10 +371,9 @@ function textRender() {
             if (player.highScoreSoundPlayed === false) {
                 player.highScoreSound.play();        
                 player.highScoreSoundPlayed = true;
-            };
-        };
-
-    };
+            }
+        }
+    }
 }
 
 

@@ -30,7 +30,7 @@ var Engine = (function(global) {
         frameCnt;
 
     // Manage one aspect of game difficulty with this variable
-    var starRenderLevel = 4;
+    var STARRENDERLEVEL = 6;
 
     canvas.width = 505;
     canvas.height = 606;
@@ -97,7 +97,7 @@ var Engine = (function(global) {
         
         checkGemCollect();
         
-        if (player.level >= starRenderLevel) {checkStarCollect();};
+        if (player.level >= STARRENDERLEVEL) {checkStarCollect();};
 
         // try to start/stop invincible sound here as well as at paused keyboard input
         if (player.hasStarPower && player.paused) {player.invincibleSound.pause();};
@@ -141,7 +141,6 @@ var Engine = (function(global) {
                 if (player.gemSoundCnt > 9) {player.gemSoundCnt = 0}
                 player.gemSound[player.gemSoundCnt].play();
                 player.gemSoundCnt++;
-
 
                 // move gem off screen
                 gem.x = -1000;
@@ -255,7 +254,7 @@ var Engine = (function(global) {
         };
 
         // Star appears at upper levels
-        if (player.level >= starRenderLevel) {
+        if (player.level >= STARRENDERLEVEL) {
            if (player.hasStarPower === false) {
                 star.render();
             };
@@ -278,10 +277,7 @@ var Engine = (function(global) {
         ctx.drawImage(Resources.get('images/Selector.png'), 1 * 101, 5 * 83-40);
     }
 
-    /* This function does nothing but it could have been a good place to
-     * handle game reset states - maybe a new game menu or a game over screen
-     * those sorts of things. It's only called once by the init() method.
-     */
+    // Reset() function handles various reset game states
     function reset() {    
         // first time through
         if (player.level === 0) {
@@ -309,6 +305,7 @@ var Engine = (function(global) {
             if (player.score >= player.highScore) {player.highScore = player.score;};
             player.score = 0;
             player.highScoreSoundPlayed = false;
+            player.gemSoundCnt = 0;
 
             allEnemies = [];
             allEnemies = createNewEnemy(allEnemies);
@@ -323,7 +320,6 @@ var Engine = (function(global) {
         };
 
         // Advance level if gems are collected 
-        // player.resetOnLevelUp
         if (player.resetOnLevelUp === true) {
             player.resetOnLevelUp = false;
             player.level++;
@@ -383,5 +379,5 @@ var Engine = (function(global) {
      */
     global.ctx = ctx;
     global.canvas = canvas;
-    global.frameCnt = frameCnt++;
+    global.frameCnt = frameCnt++;  // create a global counter for testing
 })(this);
